@@ -25,3 +25,15 @@ Checked on 2026-08-13:
 - Paper source: arXiv:2601.20180v1, OpenReview: kkhVljGiMS.
 - Consolidated result: 6/6 finite contracts pass; 0/6 paper claims independently
   verified; overall INCONCLUSIVE.
+
+## Live verification
+
+Verified on 2026-08-13 after the repository rename and branch cleanup:
+
+- Repository name: `icml26-performative-prediction-complexity`.
+- Default and only remote branch: `main`.
+- Repository homepage: https://arxiv.org/abs/2601.20180.
+- Reachable history: all retained commits use MachineLearning-Nerd with the
+  requested no-reply address.
+- Local branch state: `main` tracks `origin/main`; the
+  legacy `orx/*` refs were removed from the remote.
