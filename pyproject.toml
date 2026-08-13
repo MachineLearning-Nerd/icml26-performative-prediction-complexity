@@ -1,7 +1,7 @@
 [project]
 name = "kkhvljgims-performative-complexity"
 version = "0.1.0"
-description = "Reproduction of 'On the Computational Complexity of Performative Prediction' (arXiv:2601.20180, OpenReview kkhVljGiMS)."
+description = "Independent source-pinned finite audit of 'On the Computational Complexity of Performative Prediction' (arXiv:2601.20180, OpenReview kkhVljGiMS)."
 requires-python = ">=3.11"
 dependencies = [
     "numpy>=2.0",

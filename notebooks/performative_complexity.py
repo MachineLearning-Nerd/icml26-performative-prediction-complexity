@@ -151,8 +151,8 @@ def _(mo):
         |--------|-----------|----------|
         | rho < 1 | Tractable (RRM converges) | Standard contraction |
         | rho = 1 | Tractable (ellipsoid, Thm 3.5) | Algorithm implemented |
-        | rho <= 1+eps/eps' | **PPAD-complete** (Thm 3.4) | Reduction verified |
-        | rho <= 1+O(eps) | 2^Omega(d) ERM queries (Cor 3.7) | HPS reduction |
+        | rho <= 1+eps/eps' | **PPAD-complete** (Thm 3.4) | Finite source/threshold check passes |
+        | rho <= 1+O(eps) | 2^Omega(d) ERM queries (Cor 3.7) | Finite query-scale proxy |
 
         See the [full report](../reports/complexity-verification/report.md) for
         details on all six claims.

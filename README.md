@@ -1,63 +1,164 @@
-# On the Computational Complexity of Performative Prediction
+---
+title: "ICML 2026 — Computational Complexity of Performative Prediction"
+emoji: "⚖️"
+colorFrom: blue
+colorTo: purple
+sdk: static
+pinned: false
+tags:
+  - icml2026-repro
+  - paper-kkhVljGiMS
+  - source-pinned
+  - finite-audit
+---
 
-## Reproduction summary
+# ICML 2026 — Computational Complexity of Performative Prediction
 
-**Paper:** *On the Computational Complexity of Performative Prediction*
-(arXiv:2601.20180, OpenReview `kkhVljGiMS`)
+Independent, CPU-only, source-pinned finite audit for:
 
-**What was tested:** All six complexity-theoretic claims (PPAD-completeness,
-tractability, query lower bound, convex-domain hardness, PLS-hardness) are
-verified through **reduction/algorithm reconstruction** — each proof's reduction
-is implemented as executable code, the key lemmas are verified symbolically
-(SymPy), and the constructions are tested on concrete instances.
+> Ioannis Anagnostides, Rohan Chauhan, Ioannis Panageas, Tuomas Sandholm, and
+> Jingming Yan. “On the Computational Complexity of Performative Prediction.”
+> [arXiv:2601.20180v1](https://arxiv.org/abs/2601.20180).
+> OpenReview: [kkhVljGiMS](https://openreview.net/forum?id=kkhVljGiMS).
 
-**Assessment:** All 6 claims **VERIFIED** via independently reconstructed
-symbolic derivations and numerical corroboration.
+Repository name: `icml26-performative-prediction-complexity`
 
-| Claim | Theorem | Assessment | Evidence |
-|-------|---------|------------|----------|
-| C1 | PPAD-complete (Thm 3.4) | VERIFIED | Reduction + symbolic + 30 instances |
-| C2 | Quadratic/affine (Thm 3.4) | VERIFIED | Same reduction by construction |
-| C3 | Ellipsoid tractability (Thm 3.5) | VERIFIED | Algorithm + hypomonotonicity + scaling |
-| C4 | Query lower bound (Cor 3.7) | VERIFIED | ERM reduction + HPS hiding game |
-| C5 | Convex-domain PPAD (Thm 3.12) | VERIFIED | 2D-Sperner reduction N=3..10 |
-| C6 | PLS-hardness (Thm 4.4) | VERIFIED | Local-max-cut reduction, 50 combos |
+## Current status
 
-**Paper number vs observed:** This is a theory paper with no empirical
-experiments. Each claim is a theorem. We verify each by reconstructing the
-reduction/algorithm (not by matching experimental numbers).
+**Overall: INCONCLUSIVE.** Six finite source/formula contracts pass. The
+repository does not independently prove PPAD-completeness, PLS-hardness,
+tractability over all inputs, query lower bounds, or the paper’s other
+complexity-theoretic quantifiers.
 
-**Downscaling/substitutions:** None — the verifiers run the full reduction
-constructions. Instance sizes are finite (30 random VI instances, 50 graph/seed
-combos, grid N=3..10) but sufficient for reduction verification.
+| Layer | Result | Meaning |
+| --- | --- | --- |
+| Finite contract checks | 6/6 pass | Source anchors, selected finite algebraic/scaling controls, local objective checks, and negative controls pass. |
+| Paper-level claims | 0/6 independently verified | Finite source checks do not establish reductions, hardness transfers, algorithms over all instances, or asymptotic complexity bounds. |
+| Consolidated status | INCONCLUSIVE | This is finite audit evidence, not a proof of the paper’s theorems. |
 
-**Agreed compute:** Local CPU for development; Hugging Face `cpu-upgrade` for
-the formal run. No GPU used.
+The raw `outputs/verification.json` uses `verified` for the
+producer contracts. In that file it means that the declared finite contract
+passed. The consolidated gate in `publication_gate.json` reports
+`FINITE_CONTRACT_PASS` separately from the paper-level status.
 
-**Detailed report:** [reports/complexity-verification/report.md](reports/complexity-verification/report.md)
+The local paper archive is pinned to SHA-256
+`c32199596640624de68ae92f19d4db2324d837580da51db25910213388262b76`.
+The public arXiv record currently has only v1.
 
-**Interactive notebook:** [notebooks/performative_complexity.py](notebooks/performative_complexity.py)
-(run with `marimo edit notebooks/performative_complexity.py`)
+## What the paper does
+
+The paper studies the computational complexity of finding performatively stable
+points when a deployed model changes the data distribution. It identifies a
+phase transition near the repeated-risk-minimization boundary: PPAD-hardness
+persists in simple quadratic/linear settings, a narrow regime admits a
+tractability result, and further results cover query lower bounds, general
+convex domains, and strategic classification with PLS-hardness.
+
+This repository audits selected source expressions and finite controls related
+to those six claims. It should not be described as a complete reduction
+reproduction.
+
+## Claim ledger: producer → check → boundary
+
+All six claims are produced by
+`repro/src/verify_performative_complexity.py`. The publication runner
+`repro/src/run_publication_gate.py` runs that verifier and the
+standard-library regression test. The explanatory notebook
+`notebooks/performative_complexity.py` contains demonstrations, but it
+is not the consolidated verifier.
+
+| Claim | Paper object | What the committed verifier checks | Boundary |
+| --- | --- | --- | --- |
+| C1 | Theorem 3.4 PPAD-completeness threshold | Confirms source anchors and four finite `epsilon`/`rho` threshold relationships using `epsilon'=0.088/6`; rejects a wrong denominator. | Does not implement the affine-VI reduction or prove PPAD-hardness. |
+| C2 | Quadratic loss and affine distribution shift | Confirms the source anchor and four affine fixed-point residual cells; rejects a perturbed fixed point. | Does not establish the complete quadratic/affine hardness reduction. |
+| C3 | Theorem 3.5 tractability window | Confirms the `poly(d, log(1/epsilon))` source anchor and four monotone `epsilon^4` scaling cells. | Does not prove an ellipsoid algorithm or worst-case complexity over all inputs. |
+| C4 | Corollary 3.7 query lower bound | Confirms the `2^{Omega(d)}` source anchor and 12 finite monotone query-scale values. | Does not implement the HPS hiding game or prove the lower bound. |
+| C5 | Theorem 3.12 convex-domain hardness | Confirms the `well-bounded` source anchor in the pinned convex-domain source. | No committed Sperner reduction or universal convex-domain hardness proof. |
+| C6 | Theorem 4.4 strategic-classification PLS-hardness | Confirms the `PLS-hard` source anchor and one finite strict-local-objective control. | No committed local-max-cut reduction or proof of PLS-hardness. |
+
+A contract passes only when its source anchors and declared finite checks pass and
+its negative controls behave as expected. Passing a contract is not the same as
+verifying the associated theorem.
 
 ## Reproduce
 
+The project uses Python 3.11+ with dependencies pinned by `uv.lock`:
+
 ```bash
-uv sync && uv run python -m repro.run_all
+uv sync --frozen
+uv run python repro/src/run_publication_gate.py
 ```
 
-Environment: Python 3.12, NumPy 2.5, SymPy 1.14, SciPy 1.18 (pinned in `uv.lock`).
-Runtime: ~25 seconds total on a single CPU core.
+For a lightweight consolidated summary from the existing raw output:
 
-## Experiment log
+```bash
+uv run python repro/src/finalize_gate.py
+```
 
-| Branch / experiment | Purpose | Exact run command | Assessment | Compute |
-|---------------------|---------|-------------------|------------|---------|
-| `main` | Publication surface | Not run as an experiment (publication surface) | — | — |
-| `orx/baseline-env-setup` | Environment + weak source-pinned verifier (frozen baseline) | `uv sync && uv run python -m repro.run_all` | Passed (1 verifier, weak) | Local CPU |
-| `orx/rigorous-verification-final` | Rigorous per-claim verifiers (all 6 claims) | `pip install uv && uv sync && uv run python -m repro.run_all` | All 6 VERIFIED | HF cpu-upgrade |
+The full runner regenerates `outputs/verification.json`, runs the
+regression test, and writes the raw gate. It does not turn finite checks into
+complexity-theoretic proofs.
 
-## Original package description
+## Limitations
 
-CPU-only source-pinned certificate for ICML 2026 OpenReview `kkhVljGiMS` /
-arXiv:2601.20180. The source archive is pinned to SHA-256
-`c32199596640624de68ae92f19d4db2324d837580da51db25910213388262b76`.
+- Source-token checks confirm that the cited objects exist in the pinned archive;
+  they do not validate every displayed derivation.
+- Finite threshold, scale, affine, and local-objective cells cannot establish
+  universal reductions, PPAD/PLS hardness, or polynomial/exponential worst-case
+  complexity.
+- The notebook includes simplified demonstrations, including an ellipsoid-style
+  example; these are explanatory and are not paper-level verification.
+- The audit relies on cited prior hardness results and does not re-prove them.
+- No author executable release or empirical benchmark is claimed by this
+  repository; the paper is theoretical and this bundle is a finite audit.
+- No GPU or paid compute is required.
+
+## Branches
+
+`main` is the canonical publication branch. Historical branches are
+documented so their roles remain clear:
+
+| Branch | Role |
+| --- | --- |
+| `orx/baseline-env-setup` | Initial environment and weak source-pinned verifier. |
+| `orx/rigorous-claim-verification` | Added the rigorous per-claim verifier implementation. |
+| `orx/rigorous-verification-final` | Final rigorous verification snapshot; same tip as the HF handoff branch. |
+| `orx/rigorous-verification-hf` | Hugging Face/publication handoff mirror of the rigorous snapshot. |
+
+These branches were development lineage, not separate scientific results. The
+cleaned remote retains only `main`; see
+[BRANCH_AUDIT.md](BRANCH_AUDIT.md).
+
+## Repository map
+
+- `repro/src/verify_performative_complexity.py`: source-pinned finite producer.
+- `repro/src/run_publication_gate.py`: full finite gate runner.
+- `repro/src/finalize_gate.py`: consolidated finite-vs-paper gate.
+- `repro/tests/`: regression test.
+- `notebooks/performative_complexity.py`: explanatory interactive notebook.
+- `reports/`: detailed audit narrative.
+- `source/`: pinned arXiv source archive.
+- `outputs/`: raw verification and gate JSON.
+- `STATUS.md`, `GATE_READY.md`, and
+  `BRANCH_AUDIT.md`: status, gate, and branch lineage.
+
+## Citation
+
+```bibtex
+@article{anagnostides2026computational,
+  title   = {On the Computational Complexity of Performative Prediction},
+  author  = {Anagnostides, Ioannis and Chauhan, Rohan and Panageas, Ioannis and Sandholm, Tuomas and Yan, Jingming},
+  journal = {arXiv preprint arXiv:2601.20180},
+  year    = {2026},
+  url     = {https://arxiv.org/abs/2601.20180}
+}
+```
+
+## Thank you and attribution
+
+Thank you to Ioannis Anagnostides, Rohan Chauhan, Ioannis Panageas, Tuomas
+Sandholm, and Jingming Yan for making this theoretical work available for
+careful study. This repository is an independent finite audit, not an official
+implementation or endorsement by the authors.
+
+Maintained by [MachineLearning-Nerd](https://github.com/MachineLearning-Nerd).
